@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#151a2c"/>
+      <stop offset="100%" stop-color="#10131f"/>
+    </linearGradient>
+    <linearGradient id="ic" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <circle cx="240" cy="150" r="54" fill="url(#ic)" opacity="0.15"/>
+  <path d="M240 110 l14 28 31 4.5 -22.5 22 5.3 31 -27.8 -14.6 -27.8 14.6 5.3 -31 -22.5 -22 31 -4.5z" fill="url(#ic)"/>
+  <text x="240" y="250" font-family="Arial, sans-serif" font-size="20" fill="#6b7191" text-anchor="middle">Tool Image Coming Soon</text>
+</svg>

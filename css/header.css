@@ -1,0 +1,307 @@
+/* ==========================================================
+   AYZ Software Agency — Floating pill header
+   ========================================================== */
+
+.site-header {
+  position: sticky;
+  top: 14px;
+  z-index: 1000;
+  width: calc(100% - 32px);
+  max-width: 1180px;
+  margin: 14px auto 0;
+  border-radius: 999px;
+  background: var(--header-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  box-shadow: var(--header-shadow);
+  transition: box-shadow 0.35s ease, background 0.35s ease;
+}
+.site-header.scrolled {
+  box-shadow: 0 18px 44px rgba(0,0,0,0.5), 0 4px 14px rgba(0,0,0,0.35);
+}
+:root[data-theme="light"] .site-header.scrolled {
+  box-shadow: 0 18px 40px rgba(120,100,40,0.22), 0 4px 12px rgba(120,100,40,0.12);
+}
+
+/* Animated glowing outline — see js/header-snake.js
+   Width/height are set as exact pixel attributes by JS (matching the
+   header's own offsetWidth/offsetHeight 1:1), NOT via percentage CSS —
+   percentage sizing on an absolutely positioned child resolves against
+   the parent's padding box, which is 2px smaller than the border box
+   the header's rounded corners are actually drawn against. That
+   mismatch was stretching/misaligning the traced outline near the
+   pill's curved ends. */
+.header-snake {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+.header-snake-glow {
+  filter:
+    drop-shadow(0 0 1.5px rgba(var(--accent-rgb),0.9))
+    drop-shadow(0 0 4px rgba(var(--accent-rgb),0.55))
+    drop-shadow(0 0 9px rgba(var(--accent-rgb),0.35));
+}
+
+.header-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 8px 0 22px;
+  gap: 16px;
+}
+
+/* ---------- Logo ---------- */
+.header-inner .logo { flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
+.header-inner .logo-star {
+  height: 46px; width: auto;
+  padding: 3px 6px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.header-inner .logo-text { font-weight: 700; font-size: 16.5px; letter-spacing: -0.2px; white-space: nowrap; }
+
+/* ---------- Desktop nav (true-centered) ---------- */
+.nav-desktop {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.nav-desktop > a {
+  font-size: 14px; font-weight: 500; color: var(--text-dim);
+  position: relative; padding: 6px 0;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+.nav-desktop > a::after {
+  content: ''; position: absolute; bottom: 0; left: 0; height: 2px; width: 0;
+  background: var(--gradient-1);
+  transition: width 0.35s var(--ease);
+}
+.nav-desktop > a:hover { color: var(--text); }
+.nav-desktop > a:hover::after { width: 100%; }
+
+.nav-item { position: relative; display: flex; align-items: center; }
+.nav-link {
+  display: flex; align-items: center; gap: 5px;
+  background: none; border: none; cursor: pointer;
+  font-family: inherit;
+  font-size: 14px; font-weight: 500; color: var(--text-dim);
+  padding: 6px 0;
+  transition: color 0.3s ease;
+}
+.nav-item:hover .nav-link, .nav-link:focus-visible { color: var(--text); }
+.chevron { transition: transform 0.3s var(--ease); }
+.nav-item:hover .chevron { transform: rotate(180deg); }
+
+/* ---------- Dropdown panels (hover on desktop, [hidden]-toggle on touch) ---------- */
+.dropdown-panel {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  min-width: 250px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: var(--dropdown-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  z-index: 1300;
+}
+/* Touch / no-hover fallback: JS toggles the `hidden` attribute on click */
+@media (hover: none), (pointer: coarse) {
+  .dropdown-panel:not([hidden]) {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+/* Desktop: pure CSS hover/focus (JS removes the `hidden` attribute up front) */
+@media (hover: hover) and (pointer: fine) {
+  .nav-item:hover > .dropdown-panel,
+  .nav-item:focus-within > .dropdown-panel {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.dropdown-panel-right { left: auto; right: 0; transform: translateY(-6px); }
+@media (hover: none), (pointer: coarse) {
+  .dropdown-panel-right:not([hidden]) { transform: translateY(0); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-item:hover > .dropdown-panel-right,
+  .nav-item:focus-within > .dropdown-panel-right {
+    transform: translateY(0);
+  }
+}
+
+/* :not([hidden]) matters here — without it this rule's higher specificity
+   than the browser's own [hidden]{display:none} was forcing every link
+   to show regardless of the hidden attribute, so a logged-in visitor
+   saw both "Login / Sign Up" and "Logout" at once instead of JS's
+   toggle actually hiding one of them. */
+.dropdown-panel a:not([hidden]) {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13.5px; font-weight: 500; color: var(--text-dim);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.dropdown-panel a:hover { background: rgba(var(--accent-rgb),0.1); color: var(--text); }
+.dd-count { font-size: 11px; color: var(--text-dimmer); }
+
+.dropdown-heading {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text-dimmer);
+  padding: 8px 12px 4px;
+}
+.dropdown-note {
+  font-size: 12px; color: var(--text-dimmer);
+  padding: 10px 12px 2px;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+}
+
+/* ---------- Right-side actions ---------- */
+.header-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+:root[data-theme="light"] .icon-btn { background: rgba(20,17,12,0.04); }
+.icon-btn:hover { color: var(--neon-cyan); border-color: var(--neon-cyan); transform: translateY(-2px); }
+
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+
+.header-cta.btn { padding: 10px 22px; font-size: 14px; }
+
+/* ---------- Hamburger (mobile) ---------- */
+.hamburger {
+  display: none;
+  flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer;
+  padding: 8px;
+  z-index: 2;
+}
+.hamburger span { width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s ease; }
+.hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- Mobile dropdown menu ---------- */
+.nav-mobile {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow: var(--dropdown-shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  z-index: 900;
+}
+.nav-mobile.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-mobile a {
+  padding: 12px 10px; font-size: 15px; color: var(--text-dim);
+  border-radius: 12px;
+}
+.nav-mobile a:hover { background: rgba(var(--accent-rgb),0.08); color: var(--text); }
+.nav-mobile .btn { margin-top: 8px; justify-content: center; }
+
+/* Account links (Login/Sign Up, My Account, Logout) — the mobile menu
+   previously had no way to reach these at all, only the desktop header's
+   account-menu dropdown had them. */
+#navMobileLoginLink { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 16px; }
+
+.theme-toggle-mobile {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 10px;
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; font-size: 15px; color: var(--text-dim);
+}
+.toggle-track {
+  width: 40px; height: 22px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  position: relative;
+  flex-shrink: 0;
+}
+.toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--gradient-1);
+  transition: transform 0.3s var(--ease);
+}
+:root[data-theme="light"] .toggle-thumb { transform: translateX(18px); }
+
+/* ---------- Responsive ----------
+   `.nav-desktop` and `.header-actions` are set to `display:flex`
+   unconditionally above (no media query) so they can be absolutely
+   centered / flexed on desktop. style.css also has a
+   `@media(max-width:760px){ display:none }` rule for them, but
+   because that rule lives in an *earlier* stylesheet, this file's
+   unconditional `display:flex` — same specificity, later in the
+   cascade — was winning even under 760px, leaving the full desktop
+   nav overlapping the hamburger/logo on mobile. Hiding them here
+   instead (same file, after the unconditional rule) fixes that. */
+@media (max-width: 760px) {
+  .site-header { width: calc(100% - 20px); margin-top: 10px; top: 10px; }
+  .header-inner { height: 58px; padding: 0 8px 0 18px; }
+  .header-inner .logo-text { font-size: 15px; }
+  .nav-desktop,
+  .header-actions { display: none; }
+  .hamburger { display: flex; }
+}
+
+@media (max-width: 400px) {
+  .header-inner { padding: 0 6px 0 14px; gap: 10px; }
+  .header-inner .logo-star { height: 38px; width: auto; }
+  .header-inner .logo-text { font-size: 13px; }
+}
+
+/* Desktop / large screens only */
+@media (min-width: 1280px) {
+  .site-header { max-width: 1568px; }
+}

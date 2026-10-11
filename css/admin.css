@@ -1,0 +1,649 @@
+/* ==========================================================
+   AYZ Software Agency — Admin Panel
+   ========================================================== */
+
+.admin-body { min-height: 100vh; }
+
+/* ---------- Login screen ----------
+   `display:none` by default so the `hidden` attribute actually hides
+   this — an unconditional `display:flex` here would out-rank the
+   browser's own [hidden]{display:none} UA rule, and the login screen
+   would stay visible (stacked above the dashboard) even after
+   showDashboard() sets `hidden = true` on it. */
+.admin-login-screen { display: none; }
+.admin-login-screen:not([hidden]) {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(var(--accent-rgb),0.12), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(var(--accent-dark-rgb),0.1), transparent 50%);
+}
+.admin-login-box {
+  width: 100%; max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: var(--dropdown-shadow);
+}
+.admin-login-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 0 auto 18px; }
+.admin-login-box h1 { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.admin-login-sub { color: var(--text-dimmer); font-size: 13px; margin-bottom: 28px; }
+.admin-login-box label {
+  display: block; text-align: left;
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.admin-login-box input {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: inherit; font-size: 14px;
+}
+.admin-login-box input:focus { outline: none; border-color: var(--neon-cyan); }
+.admin-login-box .btn { width: 100%; justify-content: center; margin-top: 6px; }
+.admin-login-error {
+  color: #ef4444; font-size: 13px; margin-bottom: 14px; text-align: left;
+}
+
+/* ---------- Dashboard shell ---------- */
+.admin-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 3000;
+}
+.admin-topbar-left { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 15px; }
+.admin-header-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.admin-header-right { display: flex; align-items: center; gap: 14px; }
+.admin-link { font-size: 13px; color: var(--text-dim); }
+.admin-link:hover { color: var(--neon-cyan); }
+
+/* Hamburger — hidden on desktop, shown at the sidebar breakpoint below */
+.admin-hamburger {
+  display: none; flex-direction: column; justify-content: center; gap: 4px;
+  width: 36px; height: 36px;
+  background: none; border: 1px solid var(--border); border-radius: 8px;
+  cursor: pointer; flex-shrink: 0;
+}
+.admin-hamburger span { width: 16px; height: 2px; margin: 0 auto; background: var(--text); border-radius: 2px; }
+
+.admin-body-row { display: flex; align-items: flex-start; }
+
+.admin-sidebar {
+  width: 236px; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 18px 12px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  min-height: calc(100vh - 65px);
+  position: sticky; top: 65px;
+}
+.admin-sidebar-backdrop { display: none; }
+
+/* On desktop the header row (mobile-only branding + the collapse
+   button) collapses to just the collapse button again — display:contents
+   removes the wrapper from layout entirely without touching the DOM, so
+   .admin-sidebar-collapse keeps behaving exactly as it did before this
+   wrapper existed (align-self:flex-end, same click target). */
+.admin-sidebar-header { display: contents; }
+.admin-sidebar-brand { display: none; }
+
+.admin-sidebar-collapse {
+  display: flex; align-items: center; justify-content: center;
+  align-self: flex-end;
+  width: 28px; height: 28px;
+  margin-bottom: 6px;
+  background: none; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text-dimmer); cursor: pointer;
+  transition: all 0.2s ease;
+}
+.admin-sidebar-collapse:hover { color: var(--neon-cyan); border-color: var(--neon-cyan); }
+.admin-sidebar-collapse svg { transition: transform 0.25s ease; }
+
+.admin-tab {
+  display: flex; align-items: center; gap: 11px;
+  width: 100%; text-align: left;
+  background: none; border: none;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  color: var(--text-dimmer);
+  padding: 11px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+.admin-nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.admin-tab:hover { color: var(--text); background: rgba(var(--accent-rgb),0.06); }
+.admin-tab.active { color: var(--on-accent); background: var(--gradient-1); }
+
+/* ---------- Collapsed sidebar (desktop): icons only ---------- */
+.admin-sidebar.collapsed { width: 68px; padding: 18px 10px; }
+.admin-sidebar.collapsed .admin-sidebar-collapse { align-self: center; }
+.admin-sidebar.collapsed .admin-sidebar-collapse svg { transform: rotate(180deg); }
+.admin-sidebar.collapsed .admin-tab { justify-content: center; padding: 11px 0; }
+.admin-sidebar.collapsed .admin-tab-label { display: none; }
+
+.admin-main { flex: 1; min-width: 0; padding: 28px; max-width: 1100px; }
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+
+/* ---------- Sidebar profile button (mobile-only, see media query below) ----------
+   Desktop keeps View Site / Logout in the topbar, so this stays hidden there. */
+.admin-sidebar-profile { display: none; }
+
+/* ---------- Mobile: sidebar becomes a full-height off-canvas drawer ----------
+   Redesigned 2026-08-15: previously the drawer had a large blank
+   padding-top gap (to clear the fixed topbar) and pinned the profile
+   block to the very bottom with margin-top:auto — on a tall phone that
+   left a big dead strip of empty background between the nav list and
+   the profile block, with no border/card treatment on the nav buttons
+   themselves, so nothing looked intentional. Now the drawer has its own
+   header (covers the topbar while open, z-index already higher), every
+   nav item gets a persistent card outline, and content just flows from
+   the top instead of being stretched/split across the full height. */
+@media (max-width: 860px) {
+  .admin-hamburger { display: flex; }
+  .admin-sidebar-collapse svg { transform: none !important; }
+
+  /* The topbar's own View Site / Logout only add clutter at this width —
+     the same actions live in the sidebar drawer's profile block instead. */
+  .admin-header-right { display: none; }
+
+  .admin-sidebar,
+  .admin-sidebar.collapsed {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 5000;
+    width: 264px;
+    transform: translateX(-100%);
+    transition: transform 0.3s var(--ease);
+    box-shadow: var(--dropdown-shadow);
+    background: linear-gradient(180deg, var(--surface), var(--surface-2));
+    padding: 0;
+    gap: 0;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .admin-sidebar.open { transform: translateX(0); }
+
+  .admin-sidebar-backdrop {
+    display: none;
+    position: fixed; inset: 0; z-index: 4999;
+    background: rgba(0,0,0,0.55);
+  }
+  .admin-sidebar-backdrop.open { display: block; }
+
+  /* ---- Drawer header: brand + close button, replaces the old blank
+     padding-top strip with something that actually looks designed ---- */
+  .admin-sidebar-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    padding: 18px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .admin-sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 14px;
+    color: var(--text);
+    min-width: 0;
+  }
+  .admin-sidebar-brand span {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .admin-sidebar-logo { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .admin-sidebar-header .admin-sidebar-collapse { align-self: center; margin-bottom: 0; flex-shrink: 0; }
+
+  /* ---- Nav list: every item is now a real card at rest (border +
+     subtle fill), not just plain text that only reacts on hover ---- */
+  .admin-tab {
+    /* The base rule sets width:100% — combined with a side margin that
+       adds UP to 100%, the button was 24px wider than the drawer itself,
+       causing horizontal scroll. width:auto lets it correctly fill
+       "100% minus its own margins" instead. */
+    width: auto;
+    margin: 3px 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+  }
+  .admin-tab:first-of-type { margin-top: 10px; }
+  .admin-tab:hover { border-color: rgba(var(--accent-rgb),0.35); }
+  .admin-tab.active { border-color: transparent; box-shadow: 0 6px 16px rgba(var(--accent-rgb),0.25); }
+
+  /* "Admin Profile" is account-related, not a work tab like the other
+     8 — pin it (and the profile button right after it) to the very
+     bottom of the drawer instead of sitting in the middle of the list. */
+  .admin-tab[data-tab="admin-profile"] { margin-top: auto; }
+
+  /* Entrance animation: the drawer sliding in already had motion, but
+     nothing inside it did — each row now fades/slides in with a light
+     stagger every time the drawer opens (the animation re-plays because
+     toggling .open re-applies these rules from scratch). */
+  .admin-sidebar.open .admin-sidebar-header,
+  .admin-sidebar.open .admin-tab,
+  .admin-sidebar.open .admin-sidebar-profile {
+    animation: adminSidebarItemIn 0.35s var(--ease) backwards;
+  }
+  .admin-sidebar.open .admin-sidebar-header { animation-delay: 0s; }
+  .admin-sidebar.open .admin-tab:nth-child(2) { animation-delay: 0.03s; }
+  .admin-sidebar.open .admin-tab:nth-child(3) { animation-delay: 0.06s; }
+  .admin-sidebar.open .admin-tab:nth-child(4) { animation-delay: 0.09s; }
+  .admin-sidebar.open .admin-tab:nth-child(5) { animation-delay: 0.12s; }
+  .admin-sidebar.open .admin-tab:nth-child(6) { animation-delay: 0.15s; }
+  .admin-sidebar.open .admin-tab:nth-child(7) { animation-delay: 0.18s; }
+  .admin-sidebar.open .admin-tab:nth-child(8) { animation-delay: 0.21s; }
+  .admin-sidebar.open .admin-tab:nth-child(9) { animation-delay: 0.24s; }
+  .admin-sidebar.open .admin-tab:nth-child(10) { animation-delay: 0.27s; }
+  .admin-sidebar.open .admin-sidebar-profile { animation-delay: 0.3s; }
+  @keyframes adminSidebarItemIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ---- Profile: tapping it opens the Admin Profile tab (forgot
+     password + logout live there — see .admin-profile-danger-zone).
+     Sits directly under the "Admin Profile" tab above it, which is the
+     one carrying margin-top:auto — together they anchor to the bottom
+     of the drawer as one account section. ---- */
+  .admin-sidebar-profile {
+    display: flex; align-items: center; gap: 12px;
+    width: auto;
+    margin: 6px 12px 16px;
+    padding: 14px 12px;
+    border: none;
+    border-top: 1px solid var(--border);
+    background: none;
+    font-family: inherit; text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .admin-sidebar-profile:hover { background: rgba(var(--accent-rgb),0.06); }
+  .admin-profile-avatar {
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--gradient-1);
+    color: var(--on-accent);
+    font-weight: 800; font-size: 15px;
+  }
+  .admin-profile-info { display: flex; flex-direction: column; min-width: 0; }
+  .admin-profile-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .admin-profile-email {
+    font-size: 12px; color: var(--text-dimmer);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+}
+
+.admin-panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.admin-panel-head h2 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.admin-panel-head p { font-size: 13px; color: var(--text-dimmer); margin-top: 4px; }
+
+/* ---------- Small "+" add button (replaces the old full-width "+ Add X"
+   button in every panel header — a big text button at the top of an
+   already-busy dashboard read as heavy; this is the same action as a
+   compact icon button instead). ---------- */
+.admin-add-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--neon-cyan);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.admin-add-btn:hover { border-color: var(--neon-cyan); transform: scale(1.06); }
+.admin-add-btn svg { display: block; width: 15px; height: 15px; }
+.admin-count {
+  font-size: 12px; font-weight: 700;
+  background: var(--gradient-1); color: var(--on-accent);
+  padding: 2px 10px; border-radius: 999px;
+}
+
+.admin-search {
+  display: block; width: 100%; max-width: 340px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit; font-size: 13.5px;
+}
+.admin-search:focus { outline: none; border-color: var(--neon-cyan); }
+
+/* ---------- Tools table ---------- */
+.admin-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.admin-table th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--text-dimmer);
+  background: var(--surface-2);
+  padding: 12px 14px;
+}
+.admin-table td { padding: 10px 14px; border-top: 1px solid var(--border); vertical-align: middle; }
+.admin-table tr:hover { background: rgba(var(--accent-rgb),0.04); }
+.admin-table-img { width: 30px; height: 30px; border-radius: 6px; object-fit: contain; background: #fff; padding: 2px; }
+.admin-table-badge {
+  display: inline-block;
+  font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+  background: var(--gradient-2); color: #fff;
+}
+.admin-badge-green { background: #16a34a; }
+.admin-badge-red { background: #dc2626; }
+.admin-td-sub { color: var(--text-dimmer); font-size: 11.5px; }
+.admin-td-icon { font-size: 20px; }
+.admin-td-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.admin-row-edit,
+.admin-row-approve {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.admin-row-edit:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+.admin-row-approve { border-color: rgba(34,197,94,0.4); color: #22c55e; }
+.admin-row-approve:hover { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+
+/* ---------- Inline copy-to-clipboard icon (Customers table, etc.) ---------- */
+.admin-copy-cell { display: inline-flex; align-items: center; gap: 8px; }
+.admin-copy-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text-dimmer);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.admin-copy-icon-btn:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+.admin-copy-icon-btn.copied { border-color: var(--neon-green); color: var(--neon-green); }
+.admin-row-approve:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ---------- Payment proof (order modal) ---------- */
+.admin-proof-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.admin-proof-label {
+  margin: 0 0 8px; color: var(--text-dimmer); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;
+}
+.admin-proof-trx { margin: 0 0 10px; font-size: 13px; color: var(--text); }
+.admin-proof-media { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.admin-proof-thumb {
+  width: 84px; height: 84px; object-fit: cover; border-radius: 10px;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.admin-proof-thumb:hover { transform: scale(1.04); border-color: var(--neon-cyan); }
+.admin-proof-thumb-sm {
+  width: 40px; height: 40px; object-fit: cover; border-radius: 6px;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.admin-proof-thumb-sm:hover { transform: scale(1.12); border-color: var(--neon-cyan); }
+.admin-proof-download {
+  font-size: 12.5px; font-weight: 600; color: var(--neon-cyan);
+}
+.admin-proof-download:hover { text-decoration: underline; }
+
+/* ---------- Screenshot lightbox ---------- */
+.admin-lightbox-box {
+  position: relative; z-index: 1;
+  max-width: min(92vw, 560px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--dropdown-shadow);
+}
+.admin-lightbox-box img {
+  max-width: 100%; max-height: 70vh;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  object-fit: contain;
+}
+.admin-lightbox-box .btn { width: 100%; justify-content: center; }
+
+/* ---------- Bundle list ---------- */
+.admin-bundle-list { display: flex; flex-direction: column; gap: 10px; }
+.admin-bundle-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+.admin-bundle-row .icon { font-size: 24px; }
+.admin-bundle-row .info { flex: 1; }
+.admin-bundle-row .info strong { display: block; font-size: 14.5px; }
+.admin-bundle-row .info span { font-size: 12.5px; color: var(--text-dimmer); }
+.admin-bundle-row .price { font-weight: 700; color: var(--neon-cyan); font-size: 14px; }
+
+/* ---------- Settings form ---------- */
+.admin-settings-form { max-width: 480px; }
+.admin-settings-form fieldset {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px 6px;
+  margin-bottom: 20px;
+}
+.admin-settings-form legend {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--neon-cyan); padding: 0 6px;
+}
+.admin-settings-form label {
+  display: block; font-size: 13px; font-weight: 600; color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.admin-settings-form input {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text);
+  font-family: inherit; font-size: 14px;
+}
+.admin-settings-form input:focus { outline: none; border-color: var(--neon-cyan); }
+
+.admin-settings-form textarea {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text);
+  font-family: inherit; font-size: 14px; resize: vertical;
+}
+.admin-settings-form select {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text);
+  font-family: inherit; font-size: 14px;
+}
+.admin-setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+  flex-wrap: wrap;
+}
+.admin-setting-row input, .admin-setting-row select {
+  margin: 0;
+}
+.admin-setting-check {
+  display: flex !important; align-items: center; gap: 8px;
+  cursor: pointer;
+}
+.admin-setting-check input {
+  width: auto !important; margin: 0;
+}
+.admin-save-msg { color: #22c55e; font-size: 13px; margin-top: 10px; font-weight: 600; }
+
+.admin-profile-danger-zone {
+  max-width: 480px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.admin-profile-danger-zone .btn { width: 100%; justify-content: center; }
+
+/* ---------- Modals (tool / bundle forms) ---------- */
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 4000; padding: 20px; align-items: center; justify-content: center; }
+.admin-modal:not([hidden]) { display: flex; }
+.admin-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+.admin-modal-box {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 460px; max-height: 88vh; overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 34px 28px 28px;
+  box-shadow: var(--dropdown-shadow);
+}
+.admin-modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color: var(--text-dim); font-size: 18px; cursor: pointer;
+}
+.admin-modal-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.admin-modal-box label {
+  display: block; font-size: 12.5px; font-weight: 600; color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.admin-modal-box input,
+.admin-modal-box select,
+.admin-modal-box textarea {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text);
+  font-family: inherit; font-size: 13.5px;
+}
+.admin-modal-box input:focus, .admin-modal-box select:focus, .admin-modal-box textarea:focus { outline: none; border-color: var(--neon-cyan); }
+.admin-modal-box textarea { resize: vertical; line-height: 1.6; }
+.admin-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.admin-checkbox-label { display: flex; align-items: center; gap: 8px; }
+.admin-checkbox-label input { width: auto; margin: 0; }
+
+.admin-tool-picker {
+  max-height: 220px; overflow-y: auto;
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px; margin-bottom: 16px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.admin-tool-picker label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 500; color: var(--text-dim);
+  margin: 0; padding: 6px 8px; border-radius: 6px;
+}
+.admin-tool-picker label:hover { background: var(--surface-2); }
+.admin-tool-picker input { width: auto; margin: 0; }
+
+.admin-modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+.admin-modal-actions .btn { flex: 1; justify-content: center; }
+.admin-modal-error { color: #ef4444; font-size: 12.5px; margin-top: 12px; }
+
+@media (max-width: 640px) {
+  .admin-topbar { padding: 14px 16px; }
+  .admin-main { padding: 10px 16px 18px; }
+  .admin-form-row { grid-template-columns: 1fr; }
+}
+
+/* ---------- Tables become compact chip-style cards on phones ----------
+   Dense, like a real table row — not one field per line — so a row
+   with many columns stays short instead of turning into a long
+   scroll. Only the actions row gets its own full-width line. */
+@media (max-width: 760px) {
+  /* The old full-width "+ Add X" button needed its own stacked row on
+     mobile; the small round .admin-add-btn doesn't — it stays inline
+     next to the heading, so admin-panel-head keeps its row layout here. */
+  .admin-search { max-width: none; }
+
+  .admin-table-wrap { border: none; overflow-x: visible; }
+
+  .admin-table,
+  .admin-table thead,
+  .admin-table tbody,
+  .admin-table th,
+  .admin-table td,
+  .admin-table tr {
+    display: block;
+    width: 100%;
+  }
+  .admin-table thead { position: absolute; left: -9999px; }
+
+  .admin-table tbody {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .admin-table tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 6px; column-gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .admin-table tr:hover { background: var(--surface); }
+
+  .admin-table td {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 0;
+    border: none;
+    font-size: 12.5px;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .admin-table td::before {
+    content: attr(data-label) ":";
+    flex-shrink: 0;
+    font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+    color: var(--text-dimmer);
+  }
+
+  .admin-table td.admin-td-actions {
+    width: 100%;
+    display: flex; gap: 8px;
+    padding-top: 6px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border);
+  }
+  .admin-table td.admin-td-actions::before { display: none; }
+  .admin-table td.admin-td-actions .admin-row-edit,
+  .admin-table td.admin-td-actions .admin-row-approve {
+    flex: 1; text-align: center;
+  }
+}
+
+.admin-color-swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.admin-color-swatch {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 3px solid transparent; cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.25);
+}
+.admin-color-swatch.active { border-color: var(--text); }

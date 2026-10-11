@@ -1,0 +1,51 @@
+/* ==========================================================
+   AYZ Software Agency — Bundle plan detail page
+   ========================================================== */
+
+.bundle-hero-media { padding: 0; }
+.bundle-hero-icon {
+  font-size: 120px;
+  line-height: 1;
+  filter: drop-shadow(0 12px 26px rgba(0,0,0,0.2));
+}
+
+.bundle-hero-price {
+  font-family: 'Sora', sans-serif;
+  font-size: 34px; font-weight: 800;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+/* Included-tools preview cards: no Buy Now / Get More Details, so trim
+   the trailing space those buttons used to occupy. */
+.tool-card-preview .tool-body { padding-bottom: 20px; }
+.tool-card-preview .tool-style { margin-bottom: 0; }
+
+/* ---------- Other plans ---------- */
+.other-plans-section { padding: 20px 0 120px; }
+.other-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+}
+.other-plan-card {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  transition: transform 0.35s var(--ease), border-color 0.3s ease;
+}
+.other-plan-card:hover { transform: translateY(-4px); border-color: rgba(var(--accent-rgb),0.4); }
+.other-plan-icon { font-size: 26px; flex-shrink: 0; }
+.other-plan-name { font-weight: 700; font-size: 14.5px; color: var(--text); flex: 1; }
+.other-plan-price { font-size: 12.5px; color: var(--text-dim); text-align: right; white-space: nowrap; }
+.other-plan-price em { font-style: normal; color: var(--text-dimmer); display: block; }
+.other-plan-card svg { color: var(--text-dimmer); flex-shrink: 0; transition: transform 0.3s var(--ease), color 0.3s ease; }
+.other-plan-card:hover svg { transform: translateX(3px); color: var(--neon-cyan); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+  .other-plans-grid { grid-template-columns: 1fr; }
+  .bundle-hero-icon { font-size: 84px; }
+}

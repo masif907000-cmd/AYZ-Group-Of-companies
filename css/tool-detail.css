@@ -1,0 +1,394 @@
+/* ==========================================================
+   AYZ Software Agency — Tool detail page
+   (Checkout modal styles are shared with the homepage and live
+   in css/style.css)
+   ========================================================== */
+
+/* ---------- Back link ---------- */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 600;
+  color: var(--text-dim);
+  margin: 44px 0 30px;
+  transition: color 0.3s ease, gap 0.3s ease;
+}
+.back-link:hover { color: var(--neon-cyan); gap: 11px; }
+
+/* ---------- Hero ---------- */
+.tool-hero { padding-bottom: 90px; }
+
+.tool-hero-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.tool-hero-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 50px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(var(--accent-rgb),0.16), transparent 70%),
+    linear-gradient(180deg, #faf6ec, #efe4c8);
+  box-shadow: var(--header-shadow);
+  border: 1px solid var(--border);
+}
+.tool-hero-media img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  border-radius: 20px;
+  filter: drop-shadow(0 10px 26px rgba(0,0,0,0.2));
+}
+.tool-hero-media .tool-badge { top: 18px; left: 18px; }
+
+.tool-hero-category {
+  display: inline-block;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--neon-cyan);
+  text-decoration: none;
+  margin-bottom: 14px;
+  transition: opacity 0.25s ease;
+}
+.tool-hero-category:hover { opacity: 0.75; }
+.tool-hero-name {
+  font-size: clamp(30px, 4.5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.tool-hero-style {
+  font-size: 17px;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+}
+
+.tool-hero-trust-mini {
+  display: flex; flex-wrap: wrap; gap: 10px 20px;
+  margin-bottom: 32px;
+}
+.tool-hero-trust-mini span {
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+}
+
+/* ---------- Per-tool extra info (admin-editable note) ---------- */
+.tool-extra-info {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--neon-cyan);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-size: 14px; font-weight: 500; line-height: 1.6;
+  color: var(--text-dim);
+  white-space: pre-line;
+}
+.tool-extra-info::before {
+  content: "ℹ️";
+  flex-shrink: 0;
+}
+
+/* ---------- About this tool (unique text pulled from its guide) ---------- */
+.tool-about-section { padding: 0 0 20px; }
+.tool-about-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 24px 28px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.tool-about-text {
+  font-size: 15px; line-height: 1.75;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.tool-guide-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 700;
+  color: var(--neon-cyan);
+  transition: gap 0.3s ease;
+}
+.tool-guide-link:hover { gap: 12px; }
+.tool-guide-link svg { flex-shrink: 0; }
+
+/* ---------- Trust badges ---------- */
+.trust-section { padding: 20px 0 100px; }
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+}
+.trust-card {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  transition: transform 0.35s var(--ease), border-color 0.3s ease;
+}
+.trust-card:hover { transform: translateY(-4px); border-color: rgba(var(--accent-rgb),0.4); }
+.trust-icon { font-size: 22px; flex-shrink: 0; }
+.trust-card p { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
+
+/* ---------- Pricing ---------- */
+.pricing-section { padding: 20px 0 110px; }
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 26px;
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+.pricing-oos-notice {
+  grid-column: 1 / -1;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 44px 28px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.pricing-oos-icon { font-size: 36px; display: block; margin-bottom: 12px; }
+.pricing-oos-notice h3 { font-size: 20px; margin-bottom: 8px; }
+.pricing-oos-notice p { color: var(--text-dim); font-size: 14px; }
+
+.price-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 34px 28px;
+  text-align: center;
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s ease;
+}
+.price-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px rgba(0,0,0,0.35); }
+
+.price-card.featured {
+  border-color: rgba(var(--accent-rgb),0.5);
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.04);
+}
+.price-card.featured:hover { transform: scale(1.04) translateY(-6px); }
+
+.price-tag {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--gradient-1);
+  color: var(--on-accent);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+  padding: 5px 16px;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(var(--accent-rgb),0.4);
+  white-space: nowrap;
+}
+
+.price-label {
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-dimmer);
+  margin-bottom: 18px;
+}
+.price-amount {
+  font-family: 'Sora', sans-serif;
+  font-size: 44px; font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.price-currency {
+  font-size: 16px; font-weight: 700;
+  color: var(--neon-cyan);
+  vertical-align: super;
+  margin-right: 4px;
+}
+.price-duration {
+  font-size: 13px; color: var(--text-dimmer);
+  margin: 8px 0 26px;
+}
+
+.price-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 28px;
+  display: flex; flex-direction: column; gap: 11px;
+}
+.price-features li {
+  font-size: 14px; color: var(--text-dim);
+  padding-left: 24px;
+  position: relative;
+}
+.price-features li::before {
+  content: '✓';
+  position: absolute; left: 0; top: 0;
+  color: var(--neon-cyan);
+  font-weight: 700;
+}
+
+.choose-plan-btn { width: 100%; justify-content: center; gap: 8px; }
+
+/* ---------- FAQ ---------- */
+.faq-section { padding: 20px 0 110px; }
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 22px;
+  transition: border-color 0.3s ease;
+}
+.faq-item[open] { border-color: rgba(var(--accent-rgb),0.4); }
+.faq-question {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 0;
+  font-size: 15px; font-weight: 700; color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+.faq-question::-webkit-details-marker { display: none; }
+.faq-question svg { flex-shrink: 0; color: var(--neon-cyan); transition: transform 0.3s ease; }
+.faq-item[open] .faq-question svg { transform: rotate(180deg); }
+.faq-answer { padding: 0 0 20px; }
+.faq-answer p { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+.choose-plan-btn svg { transition: transform 0.3s var(--ease); }
+.choose-plan-btn:hover svg { transform: translateX(3px); }
+
+/* ---------- Related tools ---------- */
+.related-section { padding: 20px 0 120px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 820px) {
+  .tool-hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .tool-hero-media { max-width: 340px; margin: 0 auto; }
+  .price-card.featured { transform: none; }
+  .price-card.featured:hover { transform: translateY(-6px); }
+}
+
+@media (max-width: 480px) {
+  .trust-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .trust-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 6px;
+    padding: 14px 8px;
+  }
+  .trust-icon { font-size: 24px; }
+  .trust-card p {
+    font-size: 11px;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+  .pricing-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .price-card {
+    padding: 18px 8px 14px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
+  .price-card.featured { transform: none; }
+  .price-tag {
+    font-size: 8.5px;
+    padding: 3px 10px;
+    top: -11px;
+    white-space: nowrap;
+    letter-spacing: 0.4px;
+  }
+  .price-label {
+    font-size: 9px;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .price-amount {
+    font-size: 22px;
+    line-height: 1.1;
+    word-break: break-word;
+  }
+  .price-currency { font-size: 11px; }
+  .price-duration {
+    font-size: 9px;
+    margin: 5px 0 10px;
+  }
+  .price-features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    text-align: center;
+    margin-bottom: 12px;
+    flex-grow: 1;
+  }
+  .price-features li {
+    font-size: 8px;
+    padding: 4px 2px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .price-features li::before {
+    position: static;
+    margin-right: 2px;
+  }
+  .choose-plan-btn {
+    font-size: 9px;
+    padding: 6px 4px;
+    gap: 3px;
+    width: 100%;
+    margin-top: auto;
+  }
+  .choose-plan-btn svg { width: 10px; height: 10px; }
+  .back-link { margin: 30px 0 22px; }
+}
+
+.price-original {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  opacity: .55;
+  text-decoration: line-through;
+  margin-bottom: 2px;
+}
+.price-offer-badge {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: #22c55e;
+  color: #fff;
+}
+.checkout-plan-original { opacity: .6; margin-right: 4px; }
+.pricing-contact-notice {
+  grid-column: 1 / -1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  text-align: center;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .03);
+}
+.pricing-contact-notice h3 { margin-bottom: 8px; }
+.pricing-contact-notice p { margin-bottom: 18px; opacity: .8; }

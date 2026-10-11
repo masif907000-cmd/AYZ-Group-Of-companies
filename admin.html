@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  (function () {
+    var saved = localStorage.getItem("theme");
+    document.documentElement.setAttribute("data-theme", saved === "light" ? "light" : "dark");
+  })();
+</script>
+<title>Admin Panel — AYZ Software Agency</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/admin.css" />
+
+<link rel="icon" type="image/png" href="assets/images/favicon.png">
+</head>
+<body class="admin-body">
+
+<!-- Login screen -->
+<div class="admin-login-screen" id="loginScreen">
+  <form class="admin-login-box" id="loginForm">
+    <img class="admin-login-logo" src="assets/images/logo.jpg" alt="AYZ Software Agency" />
+    <h1>Admin Panel</h1>
+    <p class="admin-login-sub">AYZ Software Agency</p>
+
+    <label>Email
+      <input type="email" id="loginEmail" required autocomplete="username" />
+    </label>
+    <label>Password
+      <div class="password-field">
+        <input type="password" id="loginPassword" required autocomplete="current-password" />
+        <button type="button" class="password-toggle" data-toggle-target="loginPassword" aria-label="Show password">
+          <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+    </label>
+
+    <p class="admin-login-error" id="loginError" hidden></p>
+
+    <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+    <button type="button" class="auth-link" id="adminForgotLink">Forgot password?</button>
+  </form>
+
+  <!-- Forgot password -->
+  <form class="admin-login-box" id="adminForgotForm" hidden>
+    <img class="admin-login-logo" src="assets/images/logo.jpg" alt="AYZ Software Agency" />
+    <h1>Reset Password</h1>
+    <p class="admin-login-sub">Enter your email — we'll send you a reset link.</p>
+
+    <label>Email
+      <input type="email" id="adminForgotEmail" required />
+    </label>
+
+    <p class="admin-login-error" id="adminForgotError" hidden></p>
+    <p class="checkout-note" id="adminForgotSuccess" hidden>✅ Check your email for a reset link.</p>
+
+    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+    <button type="button" class="auth-link" id="adminBackToLoginLink">← Back to Login</button>
+  </form>
+
+  <!-- Set new password (reached only via the emailed reset link) -->
+  <form class="admin-login-box" id="adminResetForm" hidden>
+    <img class="admin-login-logo" src="assets/images/logo.jpg" alt="AYZ Software Agency" />
+    <h1>Set a New Password</h1>
+    <p class="admin-login-sub">Choose a new password for your admin account.</p>
+
+    <label>New Password
+      <div class="password-field">
+        <input type="password" id="adminResetPassword" required autocomplete="new-password" minlength="6" />
+        <button type="button" class="password-toggle" data-toggle-target="adminResetPassword" aria-label="Show password">
+          <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+    </label>
+
+    <p class="admin-login-error" id="adminResetError" hidden></p>
+
+    <button type="submit" class="btn btn-primary">Update Password</button>
+  </form>
+</div>
+
+<!-- Dashboard (hidden until logged in) -->
+<div class="admin-dashboard" id="dashboard" hidden>
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button type="button" class="admin-hamburger" id="sidebarToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <img class="admin-header-logo" src="assets/images/logo.jpg" alt="" />
+      <span>AYZ Software Agency <strong>Admin</strong></span>
+    </div>
+    <div class="admin-header-right">
+      <a href="index.html" target="_blank" rel="noopener" class="admin-link">View Site ↗</a>
+      <button type="button" class="btn btn-outline" id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-body-row">
+    <div class="admin-sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <nav class="admin-sidebar" id="adminSidebar">
+      <div class="admin-sidebar-header">
+        <div class="admin-sidebar-brand">
+          <img src="assets/images/logo.jpg" alt="" class="admin-sidebar-logo" />
+          <span>AYZ Software Agency <strong>Admin</strong></span>
+        </div>
+        <button type="button" class="admin-sidebar-collapse" id="sidebarCollapseToggle" aria-label="Collapse sidebar" title="Collapse sidebar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+      </div>
+      <button type="button" class="admin-tab active" data-tab="tools"><span class="admin-nav-icon">🧰</span><span class="admin-tab-label">Tools</span></button>
+      <button type="button" class="admin-tab" data-tab="bundles"><span class="admin-nav-icon">📦</span><span class="admin-tab-label">Bundles</span></button>
+      <button type="button" class="admin-tab" data-tab="payment-methods"><span class="admin-nav-icon">💳</span><span class="admin-tab-label">Payment Methods</span></button>
+      <button type="button" class="admin-tab" data-tab="trust-badges"><span class="admin-nav-icon">🏅</span><span class="admin-tab-label">Trust Badges</span></button>
+      <button type="button" class="admin-tab" data-tab="orders"><span class="admin-nav-icon">🧾</span><span class="admin-tab-label">Orders</span></button>
+      <button type="button" class="admin-tab" data-tab="customers"><span class="admin-nav-icon">👥</span><span class="admin-tab-label">Customers</span></button>
+      <button type="button" class="admin-tab" data-tab="settings"><span class="admin-nav-icon">⚙️</span><span class="admin-tab-label">Settings</span></button>
+      <button type="button" class="admin-tab" data-tab="admin-profile"><span class="admin-nav-icon">👤</span><span class="admin-tab-label">Admin Profile</span></button>
+
+      <!-- Mobile-only: tapping this goes to the Admin Profile tab (forgot
+           password + logout live there now, see that panel below) instead
+           of crowding the sidebar with separate action links. -->
+      <button type="button" class="admin-sidebar-profile" id="sidebarProfileBtn">
+        <div class="admin-profile-avatar" id="adminProfileAvatar">A</div>
+        <div class="admin-profile-info">
+          <span class="admin-profile-name">Admin</span>
+          <span class="admin-profile-email" id="adminProfileEmail">—</span>
+        </div>
+      </button>
+    </nav>
+
+  <main class="admin-main">
+
+    <!-- TOOLS TAB -->
+    <section class="admin-panel active" data-panel="tools">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Tools <span class="admin-count" id="toolsCount"></span></h2>
+          <p>Every tool shows up as a card in the website's "Tools" section.</p>
+        </div>
+        <button type="button" class="admin-add-btn" id="addToolBtn" aria-label="Add New Tool" title="Add New Tool"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <button type="button" class="btn btn-outline" id="hideAllPricesBtn">Hide price on ALL tools</button>
+        <button type="button" class="btn btn-outline" id="showAllPricesBtn">Show price on ALL tools</button>
+      </div>
+
+      <input type="search" class="admin-search" id="toolsSearch" placeholder="Search tools by name or category..." />
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th></th><th>Name</th><th>Category</th><th>Badge</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="toolsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BUNDLES TAB -->
+    <section class="admin-panel" data-panel="bundles">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Bundle Plans <span class="admin-count" id="bundlesCount"></span></h2>
+          <p>Bundle packages shown in the homepage's "Plans" section.</p>
+        </div>
+        <button type="button" class="admin-add-btn" id="addBundleBtn" aria-label="Add New Bundle" title="Add New Bundle"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+
+      <div class="admin-bundle-list" id="bundlesList"></div>
+    </section>
+
+    <!-- GUIDES TAB -->
+    <section class="admin-panel" data-panel="guides">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Guides <span class="admin-count" id="guidesCount"></span></h2>
+          <p>"How to Use" articles shown on /blog.html — each one can be linked to a tool.</p>
+        </div>
+        <button type="button" class="admin-add-btn" id="addGuideBtn" aria-label="Add New Guide" title="Add New Guide"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th></th><th>Title</th><th>Linked Tool</th><th>Published</th><th></th></tr>
+          </thead>
+          <tbody id="guidesTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAYMENT METHODS TAB -->
+    <section class="admin-panel" data-panel="payment-methods">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Payment Methods <span class="admin-count" id="paymentMethodsCount"></span></h2>
+          <p>Shown to visitors at checkout, filtered by their currency (PKR or USD). Add as many as you like.</p>
+        </div>
+        <button type="button" class="admin-add-btn" id="addPaymentMethodBtn" aria-label="Add Payment Method" title="Add Payment Method"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Currency</th><th>Type</th><th>Method Name</th><th>Account ID</th><th>Active</th><th></th></tr>
+          </thead>
+          <tbody id="paymentMethodsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TRUST BADGES TAB -->
+    <section class="admin-panel" data-panel="trust-badges">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Trust Badges <span class="admin-count" id="trustBadgesCount"></span></h2>
+          <p>The "Why Buy From Us" boxes on every tool and bundle page. Untick Active to hide one from visitors without deleting it — or add your own (e.g. "Trusted by 5,000+ Customers").</p>
+        </div>
+        <button type="button" class="admin-add-btn" id="addTrustBadgeBtn" aria-label="Add Trust Badge" title="Add Trust Badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Icon</th><th>Label</th><th>Active</th><th></th></tr>
+          </thead>
+          <tbody id="trustBadgesTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ORDERS TAB -->
+    <section class="admin-panel" data-panel="orders">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Orders <span class="admin-count" id="ordersCount"></span></h2>
+          <p>Automatically recorded when a visitor completes checkout — edit or add orders manually too (e.g. ones that came in purely over WhatsApp).</p>
+        </div>
+        <button type="button" class="admin-add-btn" id="addOrderBtn" aria-label="Add Order" title="Add Order"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Date</th><th>Customer</th><th>Item</th><th>Plan</th><th>Price</th><th>Method</th><th>Proof</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CUSTOMERS TAB -->
+    <section class="admin-panel" data-panel="customers">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Customers <span class="admin-count" id="customersCount"></span></h2>
+          <p>Everyone who has signed up for an account — copy an email to reach out directly.</p>
+        </div>
+      </div>
+
+      <input type="search" class="admin-search" id="customersSearch" placeholder="Search by name or email..." />
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr>
+          </thead>
+          <tbody id="customersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SETTINGS TAB -->
+    <section class="admin-panel" data-panel="settings">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Site Settings</h2>
+          <p>WhatsApp number, payment details, and pricing plans — applied automatically across the entire site.</p>
+        </div>
+      </div>
+
+      <form class="admin-settings-form" id="settingsForm">
+        <fieldset>
+          <legend>Site Color</legend>
+          <p style="font-size:12.5px;color:var(--text-dimmer);margin:0 0 12px;">Pick the main color of the whole website (buttons, highlights, backgrounds tint). Click a color to preview it here, then press Save Settings to publish it to the live site.</p>
+          <div class="admin-color-swatches" id="siteColorSwatches">
+            <button type="button" class="admin-color-swatch" data-color="#d4af37" style="background:#d4af37" title="Gold (default)"></button>
+            <button type="button" class="admin-color-swatch" data-color="#3b82f6" style="background:#3b82f6" title="Blue"></button>
+            <button type="button" class="admin-color-swatch" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
+            <button type="button" class="admin-color-swatch" data-color="#14b8a6" style="background:#14b8a6" title="Teal"></button>
+            <button type="button" class="admin-color-swatch" data-color="#10b981" style="background:#10b981" title="Green"></button>
+            <button type="button" class="admin-color-swatch" data-color="#8b5cf6" style="background:#8b5cf6" title="Purple"></button>
+            <button type="button" class="admin-color-swatch" data-color="#ec4899" style="background:#ec4899" title="Pink"></button>
+            <button type="button" class="admin-color-swatch" data-color="#ef4444" style="background:#ef4444" title="Red"></button>
+            <button type="button" class="admin-color-swatch" data-color="#f97316" style="background:#f97316" title="Orange"></button>
+          </div>
+          <label>Custom color
+            <input type="color" id="setSiteColor" value="#d4af37" style="height:42px;padding:4px;" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contact</legend>
+          <label>WhatsApp Number (with country code, no + or spaces)
+            <input type="text" id="setWhatsapp" placeholder="923096766688" />
+          </label>
+          <label>WhatsApp Community Invite Link
+            <input type="text" id="setWhatsappCommunity" placeholder="https://chat.whatsapp.com/..." />
+          </label>
+          <p style="font-size:12px;color:var(--text-dimmer);margin:-10px 0 14px;">Shown as a one-time popup to new visitors, inviting them to join. Leave blank to disable the popup entirely.</p>
+          <label>Popup Title
+            <input type="text" id="setCommunityPopupTitle" placeholder="Join Our WhatsApp Community" />
+          </label>
+          <label>Popup Message
+            <textarea id="setCommunityPopupMessage" rows="3" placeholder="Get instant deal alerts, new tool drops, and priority support — straight from the team."></textarea>
+          </label>
+          <label>Popup Button Text
+            <input type="text" id="setCommunityPopupButton" placeholder="Join Now" />
+          </label>
+          <label>"Maybe later" Button Text
+            <input type="text" id="setCommunityPopupLaterText" placeholder="Maybe later" />
+          </label>
+          <div class="admin-setting-row">
+            <span class="admin-setting-label">Delay (seconds) — how long after page load the popup appears</span>
+            <input type="number" id="setCommunityPopupDelay" min="0" step="0.5" placeholder="4" style="max-width:120px;" />
+          </div>
+          <div class="admin-setting-row">
+            <span class="admin-setting-label">Show Frequency</span>
+            <select id="setCommunityPopupFrequency" style="max-width:220px;">
+              <option value="once">Once per browser (default)</option>
+              <option value="always">Every visit</option>
+            </select>
+          </div>
+          <label class="admin-setting-check">
+            <input type="checkbox" id="setCommunityPopupEnabled" checked />
+            <span>Popup enabled (uncheck to turn it off completely)</span>
+          </label>
+        </fieldset>
+
+        <p style="font-size:12.5px;color:var(--text-dimmer);margin:0 0 4px;">Looking for payment methods (NayaPay, Binance, etc.)? Manage those from the <strong>Payment Methods</strong> tab now — you can add as many as you like.</p>
+
+        <fieldset>
+          <legend>Tool Detail Page — Pricing Plans (PKR)</legend>
+          <label>Monthly
+            <input type="number" id="setPriceMonthly" placeholder="699" />
+          </label>
+          <label>Half-Yearly (6 Months)
+            <input type="number" id="setPriceHalfYearly" placeholder="2499" />
+          </label>
+          <label>Yearly
+            <input type="number" id="setPriceYearly" placeholder="3999" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Pricing Plans (USD, international visitors)</legend>
+          <p style="font-size:12.5px;color:var(--text-dimmer);margin:-6px 0 14px;">Visitors outside Pakistan automatically see these USD prices instead of the PKR ones above.</p>
+          <label>Monthly (USD)
+            <input type="number" id="setPriceMonthlyUsd" placeholder="5" />
+          </label>
+          <label>Half-Yearly (USD)
+            <input type="number" id="setPriceHalfYearlyUsd" placeholder="20" />
+          </label>
+          <label>Yearly (USD)
+            <input type="number" id="setPriceYearlyUsd" placeholder="30" />
+          </label>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+        <p class="admin-save-msg" id="settingsSaveMsg" hidden>✓ Saved</p>
+      </form>
+    </section>
+
+    <!-- ADMIN PROFILE TAB -->
+    <section class="admin-panel" data-panel="admin-profile">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Admin Profile</h2>
+          <p>Your own login — name, email, and password for this admin account.</p>
+        </div>
+      </div>
+
+      <form class="admin-settings-form" id="adminProfileForm">
+        <fieldset>
+          <legend>Account</legend>
+          <label>Full Name
+            <input type="text" id="adminProfileName" placeholder="Your name" />
+          </label>
+          <label>Email
+            <input type="email" id="adminProfileEmailInput" required />
+          </label>
+          <p style="font-size:12.5px;color:var(--text-dimmer);margin:-6px 0 14px;">Changing the email sends a confirmation link to the new address — it only takes effect once you click it.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Change Password <span style="font-weight:400;color:var(--text-dimmer);">(leave both blank to keep your current password)</span></legend>
+          <label>New Password
+            <input type="password" id="adminProfileNewPassword" minlength="6" autocomplete="new-password" />
+          </label>
+          <label>Confirm New Password
+            <input type="password" id="adminProfileConfirmPassword" minlength="6" autocomplete="new-password" />
+          </label>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary">Save Profile</button>
+        <p class="admin-save-msg" id="adminProfileSaveMsg" hidden>✓ Saved</p>
+      </form>
+
+      <button type="button" class="auth-link" id="adminForgotPasswordBtn" style="margin-top:16px;">Forgot your password? Send reset link</button>
+
+      <div class="admin-profile-danger-zone">
+        <button type="button" class="btn btn-outline" id="adminProfileLogoutBtn">🚪 Logout</button>
+      </div>
+    </section>
+  </main>
+  </div>
+</div>
+
+<!-- Tool add/edit modal -->
+<div class="admin-modal" id="toolModal" hidden>
+  <div class="admin-modal-backdrop" data-modal-close></div>
+  <form class="admin-modal-box" id="toolForm">
+    <button type="button" class="admin-modal-close" data-modal-close>&times;</button>
+    <h3 id="toolModalTitle">Add New Tool</h3>
+
+    <input type="hidden" id="toolId" />
+
+    <label>Tool Name *
+      <input type="text" id="toolName" required />
+    </label>
+    <label>Category *
+      <input type="text" id="toolCategory" list="categoryList" required />
+      <datalist id="categoryList"></datalist>
+    </label>
+    <label>Style / Tagline
+      <input type="text" id="toolStyle" placeholder="e.g. SEO & Backlink Analysis" />
+    </label>
+    <div class="admin-form-row">
+      <label>Domain (for logo)
+        <input type="text" id="toolDomain" placeholder="ahrefs.com" />
+      </label>
+      <label>Badge
+        <select id="toolBadge">
+          <option value="">None</option>
+          <option value="Best Seller">Best Seller</option>
+          <option value="New">New</option>
+          <option value="Hot">Hot</option>
+        </select>
+      </label>
+    </div>
+    <label>Home Page Price Label (optional — leave blank to hide)
+      <input type="text" id="toolPrice" placeholder="e.g. PKR 699 / month" />
+    </label>
+
+    <label class="admin-checkbox-label">
+      <input type="checkbox" id="toolIsLive" checked /> Live (uncheck to mark as Out of Stock — hides Buy Now, shows a red badge)
+    </label>
+
+    <p style="font-size:12.5px;color:var(--text-dimmer);margin:14px 0 6px;">Checkout pricing for this tool — leave any field blank to fall back to the site-wide default (Settings tab)</p>
+    <div class="admin-form-row">
+      <label>Monthly (PKR)
+        <input type="number" id="toolPriceMonthly" placeholder="699" />
+      </label>
+      <label>Half-Yearly (PKR)
+        <input type="number" id="toolPriceHalfYearly" placeholder="2499" />
+      </label>
+    </div>
+    <div class="admin-form-row">
+      <label>Yearly (PKR)
+        <input type="number" id="toolPriceYearly" placeholder="3999" />
+      </label>
+      <label>Monthly (USD)
+        <input type="number" id="toolPriceMonthlyUsd" placeholder="5" />
+      </label>
+    </div>
+    <div class="admin-form-row">
+      <label>Half-Yearly (USD)
+        <input type="number" id="toolPriceHalfYearlyUsd" placeholder="20" />
+      </label>
+      <label>Yearly (USD)
+        <input type="number" id="toolPriceYearlyUsd" placeholder="30" />
+      </label>
+    </div>
+
+    <p style="font-size:12.5px;color:var(--text-dimmer);margin:14px 0 6px;">Offer prices (optional) — if set and lower than the regular price, visitors see the regular price struck through with this offer price. Leave blank for no offer.</p>
+    <div class="admin-form-row">
+      <label>Offer Monthly (PKR)
+        <input type="number" id="toolOfferMonthly" />
+      </label>
+      <label>Offer Half-Yearly (PKR)
+        <input type="number" id="toolOfferHalfYearly" />
+      </label>
+    </div>
+    <div class="admin-form-row">
+      <label>Offer Yearly (PKR)
+        <input type="number" id="toolOfferYearly" />
+      </label>
+      <label>Offer Monthly (USD)
+        <input type="number" id="toolOfferMonthlyUsd" />
+      </label>
+    </div>
+    <div class="admin-form-row">
+      <label>Offer Half-Yearly (USD)
+        <input type="number" id="toolOfferHalfYearlyUsd" />
+      </label>
+      <label>Offer Yearly (USD)
+        <input type="number" id="toolOfferYearlyUsd" />
+      </label>
+    </div>
+
+    <label class="admin-checkbox-label">
+      <input type="checkbox" id="toolPriceHidden" /> Hide price for this tool (visitors see "For more details contact on WhatsApp" — no plans, no payment)
+    </label>
+
+    <label style="margin-bottom:6px;">Available subscription lengths for this tool <span style="font-weight:400;color:var(--text-dimmer);">(only checked durations will be shown to buyers on this tool's page)</span></label>
+    <div class="admin-form-row" style="display:flex;gap:14px;flex-wrap:wrap;">
+      <label class="admin-checkbox-label">
+        <input type="checkbox" id="toolAvail1m" checked /> 1 Month
+      </label>
+      <label class="admin-checkbox-label">
+        <input type="checkbox" id="toolAvail6m" checked /> 6 Months
+      </label>
+      <label class="admin-checkbox-label">
+        <input type="checkbox" id="toolAvail1y" checked /> 1 Year
+      </label>
+    </div>
+
+    <label style="margin-bottom:6px;">Trust Badges shown on this tool's page <span style="font-weight:400;color:var(--text-dimmer);">(all checked by default — untick any that don't apply, e.g. "Extension Base Account" for a non-extension tool. Manage the badge list itself from the Trust Badges tab.)</span></label>
+    <div class="admin-tool-picker" id="toolBadgePicker"></div>
+
+    <label>Extra Info <span style="font-weight:400;color:var(--text-dimmer);">(optional — shown to visitors on this tool's page, e.g. "Includes 45 credits/month")</span>
+      <textarea id="toolExtraInfo" rows="3" placeholder="e.g. This plan includes 45 credits per month."></textarea>
+    </label>
+
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-outline" id="deleteToolBtn" hidden>Delete</button>
+      <button type="submit" class="btn btn-primary">Save Tool</button>
+    </div>
+    <p class="admin-modal-error" id="toolFormError" hidden></p>
+  </form>
+</div>
+
+<!-- Bundle add/edit modal -->
+<div class="admin-modal" id="bundleModal" hidden>
+  <div class="admin-modal-backdrop" data-modal-close></div>
+  <form class="admin-modal-box" id="bundleForm">
+    <button type="button" class="admin-modal-close" data-modal-close>&times;</button>
+    <h3 id="bundleModalTitle">Add New Bundle</h3>
+
+    <input type="hidden" id="bundleDbId" />
+
+    <label>Bundle Name *
+      <input type="text" id="bundleName" required />
+    </label>
+    <label>Bundle ID (used in the URL — only change this for a new bundle)
+      <input type="text" id="bundleSlug" required />
+    </label>
+    <div class="admin-form-row">
+      <label>Icon (emoji)
+        <input type="text" id="bundleIcon" placeholder="🚀" />
+      </label>
+      <label>Tag (optional badge)
+        <input type="text" id="bundleTag" placeholder="Best Value" />
+      </label>
+    </div>
+    <label>Description
+      <input type="text" id="bundleDesc" />
+    </label>
+    <div class="admin-form-row">
+      <label>Price (PKR / month) *
+        <input type="number" id="bundlePrice" required />
+      </label>
+      <label>Price (USD / month)
+        <input type="number" id="bundlePriceUsd" placeholder="e.g. 10" />
+      </label>
+    </div>
+
+    <label class="admin-checkbox-label">
+      <input type="checkbox" id="bundleIncludeAll" /> Include ALL tools on the site
+    </label>
+
+    <label>OR match one whole category
+      <select id="bundleCategoryMatch">
+        <option value="">— None —</option>
+      </select>
+    </label>
+
+    <label>OR hand-pick specific tools (search below)
+      <input type="search" id="bundleToolSearch" placeholder="Search tools to add/remove..." />
+    </label>
+    <div class="admin-tool-picker" id="bundleToolPicker"></div>
+
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-outline" id="deleteBundleBtn" hidden>Delete</button>
+      <button type="submit" class="btn btn-primary">Save Bundle</button>
+    </div>
+    <p class="admin-modal-error" id="bundleFormError" hidden></p>
+  </form>
+</div>
+
+<!-- Guide add/edit modal -->
+<div class="admin-modal" id="guideModal" hidden>
+  <div class="admin-modal-backdrop" data-modal-close></div>
+  <form class="admin-modal-box" id="guideForm">
+    <button type="button" class="admin-modal-close" data-modal-close>&times;</button>
+    <h3 id="guideModalTitle">Add New Guide</h3>
+
+    <input type="hidden" id="guideDbId" />
+
+    <label>Title *
+      <input type="text" id="guideTitle" required placeholder="How to Use Ahrefs: A Beginner's Guide to SEO" />
+    </label>
+    <label>Slug (used in the URL — only change this for a new guide)
+      <input type="text" id="guideSlug" required placeholder="how-to-use-ahrefs" />
+    </label>
+    <label>Linked Tool
+      <select id="guideToolSlug">
+        <option value="">— None —</option>
+      </select>
+    </label>
+    <div class="admin-form-row">
+      <label>Icon (emoji)
+        <input type="text" id="guideIconInput" placeholder="📊" />
+      </label>
+      <label class="admin-checkbox-label" style="align-self:center">
+        <input type="checkbox" id="guidePublished" checked /> Published (live on the site)
+      </label>
+    </div>
+    <label>Excerpt (short teaser shown on the blog card)
+      <input type="text" id="guideExcerptInput" placeholder="One-line summary of the guide" />
+    </label>
+    <label>Meta Description (for SEO, ~150-160 characters)
+      <input type="text" id="guideMetaDesc" placeholder="This description shows up in search results" />
+    </label>
+    <label>Focus Keyword (optional, for reference only)
+      <input type="text" id="guideFocusKeyword" placeholder="how to use ahrefs" />
+    </label>
+    <label>Content *
+      <textarea id="guideContent" rows="14" required placeholder="Simple formatting: '## ' makes a heading, '- ' makes a list item, and a blank line starts a new paragraph."></textarea>
+    </label>
+
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-outline" id="deleteGuideBtn" hidden>Delete</button>
+      <button type="submit" class="btn btn-primary">Save Guide</button>
+    </div>
+    <p class="admin-modal-error" id="guideFormError" hidden></p>
+  </form>
+</div>
+
+<!-- Payment method add/edit modal -->
+<div class="admin-modal" id="paymentMethodModal" hidden>
+  <div class="admin-modal-backdrop" data-modal-close></div>
+  <form class="admin-modal-box" id="paymentMethodForm">
+    <button type="button" class="admin-modal-close" data-modal-close>&times;</button>
+    <h3 id="paymentMethodModalTitle">Add New Payment Method</h3>
+
+    <input type="hidden" id="paymentMethodId" />
+
+    <label>Currency *
+      <select id="paymentMethodCurrency" required>
+        <option value="PKR">PKR (Pakistan)</option>
+        <option value="USD">USD (International)</option>
+      </select>
+    </label>
+    <label>Payment Type *
+      <input type="text" id="paymentMethodType" required placeholder="e.g. Binance, Bank, NayaPay, Easypaisa" />
+    </label>
+    <label>Method Name *
+      <input type="text" id="paymentMethodName" required placeholder="e.g. Binance" />
+    </label>
+    <label>Account ID / UID / Number *
+      <input type="text" id="paymentMethodAccountId" required placeholder="e.g. YOUR-BINANCE-ID" />
+    </label>
+    <label>Account Holder Name
+      <input type="text" id="paymentMethodHolder" placeholder="e.g. Account Holder Name" />
+    </label>
+    <label>IBAN (optional, for bank transfer)
+      <input type="text" id="paymentMethodIban" placeholder="e.g. PK00XXXX0000000000000000" />
+    </label>
+    <label class="admin-checkbox-label">
+      <input type="checkbox" id="paymentMethodActive" checked /> Active (visible to visitors)
+    </label>
+    <label class="admin-checkbox-label" id="paymentMethodShowPkWrap" hidden>
+      <input type="checkbox" id="paymentMethodShowPk" /> Also show this to Pakistan visitors (in addition to international)
+    </label>
+
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-outline" id="deletePaymentMethodBtn" hidden>Remove</button>
+      <button type="submit" class="btn btn-primary">Save Method</button>
+    </div>
+    <p class="admin-modal-error" id="paymentMethodFormError" hidden></p>
+  </form>
+</div>
+
+<!-- Trust badge add/edit modal -->
+<div class="admin-modal" id="trustBadgeModal" hidden>
+  <div class="admin-modal-backdrop" data-modal-close></div>
+  <form class="admin-modal-box" id="trustBadgeForm">
+    <button type="button" class="admin-modal-close" data-modal-close>&times;</button>
+    <h3 id="trustBadgeModalTitle">Add New Badge</h3>
+
+    <input type="hidden" id="trustBadgeId" />
+
+    <label>Icon (emoji)
+      <input type="text" id="trustBadgeIcon" placeholder="e.g. 🛡️" maxlength="8" />
+    </label>
+    <label>Label *
+      <input type="text" id="trustBadgeLabel" required placeholder="e.g. Trusted by 5,000+ Customers" />
+    </label>
+    <label class="admin-checkbox-label">
+      <input type="checkbox" id="trustBadgeActive" checked /> Active (visible to visitors)
+    </label>
+
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-outline" id="deleteTrustBadgeBtn" hidden>Remove</button>
+      <button type="submit" class="btn btn-primary">Save Badge</button>
+    </div>
+    <p class="admin-modal-error" id="trustBadgeFormError" hidden></p>
+  </form>
+</div>
+
+<!-- Order add/edit modal -->
+<div class="admin-modal" id="orderModal" hidden>
+  <div class="admin-modal-backdrop" data-modal-close></div>
+  <form class="admin-modal-box" id="orderForm">
+    <button type="button" class="admin-modal-close" data-modal-close>&times;</button>
+    <h3 id="orderModalTitle">Add Order</h3>
+
+    <input type="hidden" id="orderId" />
+
+    <div class="admin-form-row">
+      <label>Item Type *
+        <select id="orderItemType" required>
+          <option value="tool">Tool</option>
+          <option value="bundle">Bundle</option>
+        </select>
+      </label>
+      <label>Currency *
+        <select id="orderCurrency" required>
+          <option value="PKR">PKR</option>
+          <option value="USD">USD</option>
+        </select>
+      </label>
+    </div>
+    <label>Item Name *
+      <input type="text" id="orderItemName" required placeholder="e.g. Ahrefs" />
+    </label>
+    <label>Plan
+      <input type="text" id="orderPlanLabel" placeholder="e.g. Monthly, Half-Yearly, Yearly" />
+    </label>
+    <div class="admin-form-row">
+      <label>Price *
+        <input type="number" id="orderPrice" required />
+      </label>
+      <label>Status *
+        <select id="orderStatus" required>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </label>
+    </div>
+    <label>Payment Method
+      <input type="text" id="orderPaymentMethod" placeholder="e.g. Binance" />
+    </label>
+    <label>Customer Name
+      <input type="text" id="orderCustomerName" />
+    </label>
+    <label>Customer Contact (WhatsApp / phone)
+      <input type="text" id="orderCustomerContact" />
+    </label>
+    <label>Notes
+      <input type="text" id="orderNotes" placeholder="Optional" />
+    </label>
+
+    <div class="admin-proof-box" id="orderPaymentProof" hidden>
+      <p class="admin-proof-label">Customer-submitted payment proof</p>
+      <p class="admin-proof-trx" id="orderProofTransactionId"></p>
+      <div class="admin-proof-media" id="orderProofMediaWrap" hidden>
+        <img id="orderProofThumb" class="admin-proof-thumb" alt="Payment screenshot" data-lightbox-trigger />
+        <a id="orderProofDownload" class="admin-proof-download" download target="_blank" rel="noopener">Download ⬇</a>
+      </div>
+    </div>
+
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-outline" id="deleteOrderBtn" hidden>Delete</button>
+      <button type="submit" class="btn btn-primary">Save Order</button>
+    </div>
+    <p class="admin-modal-error" id="orderFormError" hidden></p>
+  </form>
+</div>
+
+<!-- Screenshot lightbox (shared: Orders table + Order modal) -->
+<div class="admin-modal admin-lightbox" id="screenshotLightbox" hidden>
+  <div class="admin-modal-backdrop" data-lightbox-close></div>
+  <div class="admin-lightbox-box">
+    <button type="button" class="admin-modal-close" data-lightbox-close>&times;</button>
+    <img id="lightboxImg" src="" alt="Payment screenshot" />
+    <a id="lightboxDownload" class="btn btn-primary" download target="_blank" rel="noopener">Download Screenshot ⬇</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/tools-data.js?v=10"></script>
+<script>
+  /* Admin gets its own auth session (persistSession: false) instead of
+     the shared customer-facing client from tools-data.js — logging in
+     here should never be "remembered" across visits, no matter how
+     browsing persistence is configured for regular site visitors. */
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false }
+  });
+</script>
+<script src="js/admin.js?v=9"></script>
+</body>
+</html>
